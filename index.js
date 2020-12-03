@@ -32,6 +32,7 @@ async function getRepos(req, res, next) {
 		const repos = data.public_repos;
 		//res.send(data);
 		//set data to redis
+		////setex(key, time in seconds, value)
 		client.setex(username, 3600, repos);
 		res.send(setResponse(username, repos));
 	} catch(err) {
