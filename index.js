@@ -44,7 +44,22 @@ function setResponse(username, repos){
 	return `<h3>Юзер ${username} має ${repos} репозиторіїв на Github</h3>`
 }
 
-app.get('/repos/:username', getRepos);
+//cache middleware
+function cache(req, res, next) {
+	const { username } = req.params;
+
+	client.get(username, (err, data) => {
+		if(err) throw err;
+
+		if(data !== null) {
+			res.send(setResponse(username, data));
+		} else {
+			next();
+		}
+	})
+}
+
+app.get('/repos/:username', cache, getRepos);
 
 app.listen(PORT, () => {
 	console.log(`App listening on port ${PORT}`);
